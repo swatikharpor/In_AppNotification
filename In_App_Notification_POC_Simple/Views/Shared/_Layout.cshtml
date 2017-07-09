@@ -1,0 +1,262 @@
+﻿@using In_App_Notification_POC_Simple.Models
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Task Manager</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+   // @Styles.Render("~/Content/kendo/css")
+    <link href="@Url.Content("~/Content/kendo/kendo.default.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/kendo.dataviz.default.min.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/kendo/jszip.min.js")"></script>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="~/css/animate.css" rel="stylesheet">
+    <link href="~/css/style.css" rel="stylesheet">
+
+    <!-- Morris -->
+    <link href="~/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+    <script src="~/js/jquery-2.1.1.js"></script>
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var url = window.location;
+            $('ul.nav a[href="' + url + '"]').parent().addClass('active');
+            $('ul.nav a').filter(function () {
+                return this.href == url;
+            }).parent().addClass('active');
+
+        });
+    </script>
+</head>
+@{
+    var sessionResult = (LoginDetailDm)Session["SessionData"];
+    var name = sessionResult.UserName;
+    var singleCharacter = name[0];
+    var role = sessionResult.RoleName;
+    string userRoleName = sessionResult.RoleName;
+}
+
+
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog" style="left:0px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                <h3 class="modal-title"></h3>
+            </div>
+            <div class="modal-body">
+                <h2> Are you sure ?</h2>
+
+
+            </div>
+            <div class="modal-footer">
+                <a class="confirmlink" href="@Url.Action("Logout", "Login")">
+                    <i class="fa fa-sign-out"></i> Ok
+                </a> &nbsp;
+                <a data-dismiss="modal"><i class="fa fa-sign-in"></i> Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<body class="pace-done" style="margin-top: -50px;">
+    <div id="wrapper">
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span>
+                                <img alt="@singleCharacter" class="img-circle" style="font-size:xx-large" />
+                            </span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                                    <span class="block m-t-xs">
+                                        <strong class="font-bold">@name</strong>
+                                    </span> <span class="text-muted text-xs block">@role <b class="caret"></b></span>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                @*<li><a href="profile.html">Profile</a></li>
+                                    <li><a href="contacts.html">Contacts</a></li>
+                                    <li><a href="mailbox.html">Mailbox</a></li>
+                                    <li class="divider"></li>*@
+                                <li><a href="@Url.Action("Logout", "Login")">Logout</a></li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">
+                            TM
+                        </div>
+
+                    </li>
+                    @if (userRoleName == "Employee")
+                    {
+                        <li>
+                            <a href="@Url.Action("Dashboard", "Employee")"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span> <span class="fa arrow"></span></a>
+
+                        </li>
+
+
+                        <li>
+                            <a href="@Url.Action("MyTasks", "Employee")"><i class="fa fa-tasks"></i> <span class="nav-label">My Tasks</span> <span class="fa arrow"></span> </a>
+                        </li>
+
+                    }
+
+                    @if (userRoleName == "Manager")
+                    {
+                        <li>
+                            <a href="@Url.Action("Dashboard", "Manager")"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span> <span class="fa arrow"></span></a>
+
+                        </li>
+                        <li>
+                            <a href=""><i class="fa fa-tasks"></i> <span class="nav-label">My Task </span> <span class="fa arrow"></span></a>
+
+                            <ul class="nav nav-second-level sidebar-collapse in">
+
+                                <li>
+                                    <a href="@Url.Action("CreateTask", "Manager")">Create Task    <i class="fa fa-plus"></i></a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("ListTask", "Manager")">View Tasks       <i class="fa fa-eye"></i></a>
+                                </li>
+
+
+                            </ul>
+                        </li>
+                    }
+
+
+                    @if (sessionResult.RoleName == "Admin")
+                    {
+                        <li>
+                            <a href=""><i class="fa fa-user"></i> <span class="nav-label">Users </span> <span class="fa arrow"></span></a>
+
+                            <ul class="nav nav-second-level sidebar-collapse in">
+                                <li>
+                                    <a href="@Url.Action("SaveUserDetails", "Admin")">Add User   <i class="fa fa-plus"></i></a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("ViewUserDetails", "Admin")">View User  <i class="fa fa-eye"></i></a>
+                                </li>
+
+                            </ul>
+                        </li>
+                    }
+                    
+                    <li>
+                        
+                    </li>
+                </ul>
+            </div>
+
+        </nav>
+        <div id="page-wrapper" class="gray-bg">
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                        <form role="search" class="navbar-form-custom" method="post" action="#">
+                            <div class="form-group">
+                                <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search" onkeyup="myFunction()" >
+                            </div>
+                        </form>
+                       
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li>
+                            <span class="m-r-sm text-muted welcome-message">Welcome to Task Manager</span>
+                        </li>
+                        
+                        <li>
+                            <p>Total Number of visitors: @ApplicationInstance.Application["Totaluser"]</p>
+                        </li>
+                        <li>
+                            <a class="" data-toggle="modal" data-target="#myModal">
+                                <i class="fa fa-sign-out"></i> Log out
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </nav>
+            </div>
+            <div>
+                @RenderBody()
+            </div>
+
+
+
+            <div class="footer">
+                <div>
+                    <strong>Task Manager</strong> &copy; 2017-2018
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mainly scripts -->
+    <script src="~/js/jquery-2.1.1.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="~/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="~/js/inspinia.js"></script>
+    @*<script src="~/js/plugins/pace/pace.min.js"></script>*@
+
+    <!-- Peity -->
+    <script src="~/js/plugins/peity/jquery.peity.min.js"></script>
+    <script src="~/js/demo/peity-demo.js"></script>
+
+    <!-- Sparkline demo data  -->
+    @*<script src="~/js/demo/sparkline-demo.js"></script>*@
+    @Scripts.Render("~/bundles/kendo")
+    <script src="~/Scripts/respond.min.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+
+</html>
+<script type="text/javascript">
+    function myFunction() {
+
+        // Declare variables
+        var input, filter, table, tr, td, i;
+        input = document.getElementById("top-search");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    //$('#top-search').change(function () {
+    //        var searchtext = $(this).val();
+    //        $.ajax({
+    //            cache: false,
+    //            type: "get",
+    //            url: "/Admin/Search/",
+    //            data: { SearchText : searchtext },
+    //            success: function (response) {
+    //            }
+    //        })
+    //    })
+
+
+</script>

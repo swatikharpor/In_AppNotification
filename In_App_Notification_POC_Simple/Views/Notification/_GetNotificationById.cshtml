@@ -1,0 +1,44 @@
+﻿@model In_App_Notification_POC_Simple.Models.NotificationDm
+
+<div>
+    <h4>NotificationDm</h4>
+    <hr />
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="myModalLabel">FriendsInfo</h4>
+    </div>   
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.NotificationType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NotificationType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NotificationMessage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NotificationMessage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NotificationFrom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NotificationFrom)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsRead)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsRead)
+        </dd>
+
+    </dl>
+</div>

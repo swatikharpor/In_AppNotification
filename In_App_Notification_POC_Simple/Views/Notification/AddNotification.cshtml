@@ -1,0 +1,109 @@
+﻿@model In_App_Notification_POC_Simple.Models.NotificationDm
+
+@{
+    ViewBag.Title = "AddNotification";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+
+    <button id="notification"><i class="glyphicon glyphicon-bell" id="count"></i></button>
+   @using (Html.BeginForm("GetNotificationById","Notification",FormMethod.Get))
+   {
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+      
+        <div class="col-lg-10" style="margin-bottom:10px;" id='notifications'>
+        </div> 
+    </div>
+
+   } 
+
+<div id='myModal' class='modal col-md-6'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent'>Test</div>
+        </div>
+    </div>
+
+</div> 
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        
+        
+
+    });
+    $('#notification').click(function () {
+        $.ajax({
+            url: "/Notification/GetNotifications",
+            type: 'get',
+            dataType: 'json',
+            success: function (response) {
+
+                var len = response.length;
+
+                $("#notifications").empty();
+                $("#notifications").append("<select id =options>");
+                for (var i = 0; i < len; i++) {
+                    var id = response[i]['Id'];
+                    var name = response[i]["NotificationMessage"];
+                    $("#options").append("<option value=\"" + id + "\" data-id =" + id + ">" + name + "</option>");
+                }
+                $("#notifications").append("</select>");
+            }
+        }
+        );
+    });
+
+    $("#notifications").change(function () {
+        var notificationId = $("#options").val();
+        showModal(notificationId);
+
+    });
+
+    function showModal(notificationId) {
+
+        var options = { "backdrop": "static", keyboard: true };
+        $.ajax({
+            url: "/Notification/GetNotificationById",
+            data: { notificationId: notificationId },
+            type: 'post',
+            success: function (response) {
+                alert("Success");
+                //  $("#display").css("visibility", "visible");
+                // // var len = response.length;
+
+                ////  $("#display").empty();
+
+                //  for (var i = 0; i < 1; i++) {
+                //      var id = response["NotificationType"].trim();
+                //      var name = response["NotificationMessage"];
+                //      var from = response["From"];
+
+                //      $("#type").append(id);
+                //      $("#name").append(name);
+                //      $("#from").append(from);
+                //}
+                //$("#notifications").append("</select>");
+
+
+                $('#myModalContent').html(response);
+                $('#myModal').modal(options);
+                $('#myModal').modal('show');
+
+            },
+            error: function(response) {
+                alert("Error");
+                $('#myModalContent').html(response);
+                $('#myModal').modal(options);
+                $('#myModal').modal('show');
+            }
+
+
+        });
+    };
+
+</script>

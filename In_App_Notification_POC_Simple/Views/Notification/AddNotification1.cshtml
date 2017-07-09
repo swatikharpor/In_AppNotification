@@ -1,0 +1,47 @@
+﻿@using System.Web.UI.WebControls
+@model In_App_Notification_POC_Simple.Models.NotificationDm
+
+@using (Html.BeginForm("AddNotification","Notification",FormMethod.Post)) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>NotificationDm</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.NotificationType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NotificationType, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NotificationType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NotificationMessage, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NotificationMessage, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NotificationMessage, "", new { @class = "text-danger" })
+            </div>
+        </div>
+       
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NotificationTo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+               @Html.DropDownListFor(m=> m.NotificationTo,ViewBag.To as IEnumerable<SelectListItem>)
+            </div>
+        </div>
+        
+        
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

@@ -1,0 +1,19 @@
+﻿@model IEnumerable<In_App_Notification_POC_Simple.Models.NotificationDm>
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h4 class="modal-title" id="myModalLabel">FriendsInfo</h4>
+</div>   
+<table class="table">
+    
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.HiddenFor(modelItem =>item.Id)
+            @Html.DisplayFor(modelItem => item.NotificationType)
+            @Html.DisplayFor(modelItem => item.NotificationMessage)
+        </td>
+    </tr>
+}
+
+</table>

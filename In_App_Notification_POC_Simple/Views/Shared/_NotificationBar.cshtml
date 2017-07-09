@@ -1,0 +1,269 @@
+﻿@model List<In_App_Notification_POC_Simple.Models.NotificationDm>
+@{
+    ViewBag.Title = "ListTask";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .ul {
+        display: block;
+        background: #45619D;
+        list-style: none;
+        margin: 0;
+        padding: 12px 10px;
+        height: 37px;
+    }
+
+        .ul .li {
+            float: left;
+            font: 13px helvetica;
+            font-weight: bold;
+            margin: 3px 0;
+        }
+
+            .ul .li a {
+                color: #FFF;
+                text-decoration: none;
+                padding: 6px 15px;
+                cursor: pointer;
+            }
+
+                .ul .li a:hover {
+                    background: #425B90;
+                    text-decoration: none;
+                    cursor: pointer;
+                }
+
+    #noti_Container {
+        position: relative;
+    }
+
+    .modal-dialog {
+        background: #fff;
+    }
+    /* A CIRCLE LIKE BUTTON IN THE TOP MENU. */
+    #noti_Button {
+        width: 22px;
+        height: 22px;
+        line-height: 22px;
+        margin: -3px 10px 0 10px;
+        cursor: pointer;
+        background: #45619D !important;
+    }
+
+    /* THE POPULAR RED NOTIFICATIONS COUNTER. */
+    #noti_Counter {
+        display: block;
+        position: absolute;
+        background: #E1141E;
+        color: #FFF;
+        font-size: 12px;
+        font-weight: normal;
+        padding: 1px 3px;
+        margin: -8px 0 0 25px;
+        border-radius: 2px;
+        -moz-border-radius: 2px;
+        -webkit-border-radius: 2px;
+        z-index: 1;
+    }
+
+    /* THE NOTIFICAIONS WINDOW. THIS REMAINS HIDDEN WHEN THE PAGE LOADS. */
+    #notifications {
+        display: none;
+        width: 430px;
+        position: absolute;
+        top: 30px;
+        left: 0;
+        background: #FFF;
+        border: solid 1px rgba(100, 100, 100, .20);
+        -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .20);
+        z-index: 0;
+    }
+        /* AN ARROW LIKE STRUCTURE JUST OVER THE NOTIFICATIONS WINDOW */
+        #notifications:before {
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            color: transparent;
+            border: 10px solid #CCC;
+            border-color: transparent transparent #FFF;
+            margin-top: -20px;
+            margin-left: 10px;
+        }
+
+    .h3 {
+        display: block;
+        color: #333;
+        background: #FFF;
+        font-weight: bold;
+        font-size: 13px;
+        padding: 8px;
+        margin: 0;
+        border-bottom: solid 1px rgba(100, 100, 100, .30);
+    }
+
+    .seeAll {
+        background: #F6F7F8;
+        padding: 8px;
+        font-size: 12px;
+        font-weight: bold;
+        border-top: solid 1px rgba(100, 100, 100, .30);
+        text-align: center;
+    }
+
+        .seeAll a {
+            color: #3b5998 !important;
+        }
+
+            .seeAll a:hover {
+                background: #F6F7F8;
+                color: #3b5998;
+                text-decoration: underline;
+            }
+</style>
+<div>
+    <ul class="ul">
+        <li class="li"><a href="#">Home</a></li>
+        <li class="li"><a href="#">Find Friends</a></li>;
+        <li class="li" id="noti_Container">
+            <div id="noti_Counter"></div>   <!--SHOW NOTIFICATIONS COUNT.-->
+            <!--A CIRCLE LIKE BUTTON TO DISPLAY NOTIFICATION DROPDOWN.-->
+            <div id="noti_Button" class="fa fa-bell fa-lg" style="color: white"></div>
+
+            <!--THE NOTIFICAIONS DROPDOWN BOX.-->
+            <div id="notifications">
+                <h3 class="h3">Notifications</h3>
+                <div id="noti" style="height:300px;"></div>
+                <div class="seeAll">
+                    <a href="#">See All</a>
+                </div>
+            </div>
+        </li>
+        <li class="li"><a href="#">Messages</a></li>
+    </ul>
+    <div id='myNotificationModal' class='modal col-md-6'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div id='myModalNotificationContent'>Test</div>
+            </div>
+        </div>
+
+    </div>
+    <div id='myModal' class='modal col-md-6'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div id='myModalContent'></div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        var id;
+
+        // ANIMATEDLY DISPLAY THE NOTIFICATION COUNTER.
+        $(function notificationCount() {
+            $.ajax({
+                url: "/Notification/GetUnreadNotificationsCount",
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    $('#noti_Counter').html(data);
+                },
+                complete: function () {
+                    // Schedule the next request when the current one's complete
+                    setTimeout(notificationCount, 5000);
+                }
+
+            });
+        });
+        $.ajax({
+            url: "/Notification/GetTopTenNotifications",
+            type: 'get',
+            dataType: 'json',
+            success: function (response) {
+                $('#notifications').style = "display:block"
+                var len = response.length;
+
+                //  $("#notifications").empty();
+                //    $("#notifications").append("<select id =options>");
+                for (var i = 0; i < len; i++) {
+                    id = response[i]['Id'];
+                    var type = response[i]['NotificationType'];
+                    var message = response[i]["NotificationMessage"];
+
+                    $("#noti").append("<button id=\"notify\" style=\"width:100%; height:30px; background-color: #f5f5f5; color: #050516;\"class=\"btn btn-default\"  value=" +
+                        id +
+                        ">" +
+                        type +
+                        " , " +
+                        message +
+                        "</button>").bind("click", function () {
+                            debugger;
+                            var options = { "backdrop": "static", keyboard: true };
+                            $.ajax({
+                                url: "/Notification/GetNotificationById",
+                                data: { notificationId: id },
+                                type: 'post',
+                                success: function (response) {
+
+                                    $('.modal-dialog').html(response);
+                                    $('#myModal').modal(options);
+                                    $('#myModal').modal('show');
+
+                                },
+                                error: function (response) {
+                                    alert("Error");
+                                    $('#myModalContent').html(response);
+                                    $('#myModal').modal(options);
+                                    $('#myModal').modal('show');
+                                }
+
+
+                            });
+                        });
+                }
+            }
+        });
+
+        $('#noti_Button').click(function () {
+
+            // TOGGLE (SHOW OR HIDE) NOTIFICATION WINDOW.
+            $('#notifications').fadeToggle('fast',
+                'linear',
+                function () {
+                    if ($('#notifications').is(':hidden')) {
+                        $('#noti_Button').css('background-color', '#2E467C');
+                    } else $('#noti_Button').css('background-color', '#FFF'); // CHANGE BACKGROUND COLOR OF THE BUTTON.
+
+
+                });
+
+
+
+            //  $('#noti_Counter').html(notiCount);
+
+            $('#noti_Counter').fadeOut('slow'); // HIDE THE COUNTER.
+            return false;
+        });
+
+        // HIDE NOTIFICATIONS WHEN CLICKED ANYWHERE ON THE PAGE.
+        $(document).click(function () {
+            $('#notifications').hide();
+
+            // CHECK IF NOTIFICATION COUNTER IS HIDDEN.
+            if ($('#noti_Counter').is(':hidden')) {
+                // CHANGE BACKGROUND COLOR OF THE BUTTON.
+                $('#noti_Button').css('background-color', '#2E467C');
+            }
+        });
+
+        $('#notifications').click(function () {
+            return false; // DO NOTHING WHEN CONTAINER IS CLICKED.
+        });
+    });
+
+</script>
