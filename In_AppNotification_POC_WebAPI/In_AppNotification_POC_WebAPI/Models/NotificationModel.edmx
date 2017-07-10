@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="InAppNotificationModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="LoginDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="UserName" Type="nchar" MaxLength="10" />
+          <Property Name="EmailId" Type="nchar" MaxLength="10" />
+          <Property Name="Password" Type="nchar" MaxLength="10" />
+          <Property Name="RoleId" Type="int" />
+          <Property Name="RoleName" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="TaskNotification">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="NotificationType" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="NotificationMessage" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="NotificationFrom" Type="nvarchar" MaxLength="30" />
+          <Property Name="IsRead" Type="bit" Nullable="false" />
+          <Property Name="NotificationTo" Type="nvarchar" MaxLength="30" />
+        </EntityType>
+        <Association Name="FK__TaskNotif__Notif__398D8EEE">
+          <End Role="LoginDetail" Type="Self.LoginDetail" Multiplicity="0..1" />
+          <End Role="TaskNotification" Type="Self.TaskNotification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LoginDetail">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TaskNotification">
+              <PropertyRef Name="NotificationFrom" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TaskNotif__Notif__3A81B327">
+          <End Role="LoginDetail" Type="Self.LoginDetail" Multiplicity="0..1" />
+          <End Role="TaskNotification" Type="Self.TaskNotification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LoginDetail">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TaskNotification">
+              <PropertyRef Name="NotificationTo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="InAppNotificationModelStoreContainer">
+          <EntitySet Name="LoginDetail" EntityType="Self.LoginDetail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TaskNotification" EntityType="Self.TaskNotification" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__TaskNotif__Notif__398D8EEE" Association="Self.FK__TaskNotif__Notif__398D8EEE">
+            <End Role="LoginDetail" EntitySet="LoginDetail" />
+            <End Role="TaskNotification" EntitySet="TaskNotification" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TaskNotif__Notif__3A81B327" Association="Self.FK__TaskNotif__Notif__3A81B327">
+            <End Role="LoginDetail" EntitySet="LoginDetail" />
+            <End Role="TaskNotification" EntitySet="TaskNotification" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="InAppNotificationModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="LoginDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="UserName" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="EmailId" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="RoleId" Type="Int32" />
+          <Property Name="RoleName" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TaskNotifications" Relationship="InAppNotificationModel.FK__TaskNotif__Notif__398D8EEE" FromRole="LoginDetail" ToRole="TaskNotification" />
+          <NavigationProperty Name="TaskNotifications1" Relationship="InAppNotificationModel.FK__TaskNotif__Notif__3A81B327" FromRole="LoginDetail" ToRole="TaskNotification" />
+        </EntityType>
+        <EntityContainer Name="InAppNotificationEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="LoginDetails" EntityType="Self.LoginDetail" />
+          <EntitySet Name="TaskNotifications" EntityType="InAppNotificationModel.TaskNotification" />
+          <AssociationSet Name="FK__TaskNotif__Notif__398D8EEE" Association="InAppNotificationModel.FK__TaskNotif__Notif__398D8EEE">
+            <End Role="LoginDetail" EntitySet="LoginDetails" />
+            <End Role="TaskNotification" EntitySet="TaskNotifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TaskNotif__Notif__3A81B327" Association="InAppNotificationModel.FK__TaskNotif__Notif__3A81B327">
+            <End Role="LoginDetail" EntitySet="LoginDetails" />
+            <End Role="TaskNotification" EntitySet="TaskNotifications" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="TaskNotification">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NotificationType" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="NotificationMessage" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="NotificationFrom" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="IsRead" Type="Boolean" Nullable="false" />
+          <Property Name="NotificationTo" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="LoginDetail" Relationship="InAppNotificationModel.FK__TaskNotif__Notif__398D8EEE" FromRole="TaskNotification" ToRole="LoginDetail" />
+          <NavigationProperty Name="LoginDetail1" Relationship="InAppNotificationModel.FK__TaskNotif__Notif__3A81B327" FromRole="TaskNotification" ToRole="LoginDetail" />
+        </EntityType>
+        <Association Name="FK__TaskNotif__Notif__398D8EEE">
+          <End Type="InAppNotificationModel.LoginDetail" Role="LoginDetail" Multiplicity="0..1" />
+          <End Type="InAppNotificationModel.TaskNotification" Role="TaskNotification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LoginDetail">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TaskNotification">
+              <PropertyRef Name="NotificationFrom" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TaskNotif__Notif__3A81B327">
+          <End Type="InAppNotificationModel.LoginDetail" Role="LoginDetail" Multiplicity="0..1" />
+          <End Type="InAppNotificationModel.TaskNotification" Role="TaskNotification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LoginDetail">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TaskNotification">
+              <PropertyRef Name="NotificationTo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="InAppNotificationModelStoreContainer" CdmEntityContainer="InAppNotificationEntities">
+          <EntitySetMapping Name="LoginDetails">
+            <EntityTypeMapping TypeName="InAppNotificationModel.LoginDetail">
+              <MappingFragment StoreEntitySet="LoginDetail">
+                <ScalarProperty Name="RoleName" ColumnName="RoleName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="EmailId" ColumnName="EmailId" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TaskNotifications">
+            <EntityTypeMapping TypeName="InAppNotificationModel.TaskNotification">
+              <MappingFragment StoreEntitySet="TaskNotification">
+                <ScalarProperty Name="NotificationTo" ColumnName="NotificationTo" />
+                <ScalarProperty Name="IsRead" ColumnName="IsRead" />
+                <ScalarProperty Name="NotificationFrom" ColumnName="NotificationFrom" />
+                <ScalarProperty Name="NotificationMessage" ColumnName="NotificationMessage" />
+                <ScalarProperty Name="NotificationType" ColumnName="NotificationType" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
