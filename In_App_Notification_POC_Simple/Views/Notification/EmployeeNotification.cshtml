@@ -1,0 +1,64 @@
+﻿@using In_App_Notification_POC_Simple.Models
+
+@{
+    ViewBag.Title = "EmployeeNotification";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>EmployeeNotification</h2>
+<div id ="notificationBar">@{
+    Html.RenderPartial("_NotificationBar");
+}</div>
+
+<script>    @{
+    var user = (LoginDetailDm) Session["SessionData"];
+   // var url = string.Empty;
+} $(document).ready(function() {
+    $(function waitEvent() {
+                $.ajax({
+                    url: "/Notification/EmployeeWaitMessage",
+                    data:{userName:"@user.UserName" },
+                    type: 'post',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response) {
+                            $.ajax({
+                                url: "/Notification/GetUnreadNotifications_Count",
+                                type: 'get',
+                                dataType: 'json',
+                                async : true,
+                                success: function (data)
+                                {
+                                    $('#noti_Counter').html(data);
+                                   }
+                            });
+                            alert("done");
+
+                        }
+                            else {
+                          //  alert("else");
+                    setTimeout(waitEvent, 0);
+                    };
+                    // Keep looping.
+
+                    },
+                    complete: function () {
+                    //    alert("complete");
+                    // Schedule the next request when the current one's complete
+                    setTimeout(waitEvent(), 5000);
+                    }
+                    });
+                    });
+    });
+
+  
+       
+       //function GetPartial() {
+       //    $.ajax({
+       //        url: "/Notification/GetNotificationBarPartial",
+       //        type: 'get',
+       //        success: function (response) {
+       //            $('#notificationBar').html(response);
+       //        }
+       //    });
+   </script>

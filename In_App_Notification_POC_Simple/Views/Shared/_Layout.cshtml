@@ -7,7 +7,7 @@
     <title>@ViewBag.Title - Task Manager</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-   // @Styles.Render("~/Content/kendo/css")
+    @Styles.Render("~/Content/kendo/css")
     <link href="@Url.Content("~/Content/kendo/kendo.default.min.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/kendo/kendo.dataviz.default.min.css")" rel="stylesheet" type="text/css" />
     <script src="@Url.Content("~/Scripts/kendo/jszip.min.js")"></script>
@@ -15,11 +15,10 @@
     <link href="~/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="~/css/animate.css" rel="stylesheet">
     <link href="~/css/style.css" rel="stylesheet">
-
     <!-- Morris -->
     <link href="~/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
     <script src="~/js/jquery-2.1.1.js"></script>
-
+    <script src="https://www.w3schools.com/lib/w3.js"></script>
 
     <script type="text/javascript">
 
@@ -99,13 +98,13 @@
                     @if (userRoleName == "Employee")
                     {
                         <li>
-                            <a href="@Url.Action("Dashboard", "Employee")"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span> <span class="fa arrow"></span></a>
+                            <a href="@Url.Action("EmployeeNotification", "Notification")"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span> <span class="fa arrow"></span></a>
 
                         </li>
 
 
                         <li>
-                            <a href="@Url.Action("MyTasks", "Employee")"><i class="fa fa-tasks"></i> <span class="nav-label">My Tasks</span> <span class="fa arrow"></span> </a>
+                            <a href="@Url.Action("MyTasks", "Notification")"><i class="fa fa-tasks"></i> <span class="nav-label">My Tasks</span> <span class="fa arrow"></span> </a>
                         </li>
 
                     }
@@ -113,7 +112,7 @@
                     @if (userRoleName == "Manager")
                     {
                         <li>
-                            <a href="@Url.Action("Dashboard", "Manager")"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span> <span class="fa arrow"></span></a>
+                            <a href="@Url.Action("Dashboard", "Notification")"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span> <span class="fa arrow"></span></a>
 
                         </li>
                         <li>
@@ -122,10 +121,10 @@
                             <ul class="nav nav-second-level sidebar-collapse in">
 
                                 <li>
-                                    <a href="@Url.Action("CreateTask", "Manager")">Create Task    <i class="fa fa-plus"></i></a>
+                                    <a href="@Url.Action("AddNotification", "Notification")">Create Task    <i class="fa fa-plus"></i></a>
                                 </li>
                                 <li>
-                                    <a href="@Url.Action("ListTask", "Manager")">View Tasks       <i class="fa fa-eye"></i></a>
+                                    <a href="@Url.Action("AddNotification", "Notification")">View Tasks       <i class="fa fa-eye"></i></a>
                                 </li>
 
 
@@ -141,19 +140,15 @@
 
                             <ul class="nav nav-second-level sidebar-collapse in">
                                 <li>
-                                    <a href="@Url.Action("SaveUserDetails", "Admin")">Add User   <i class="fa fa-plus"></i></a>
+                                    <a href="@Url.Action("AddNotification", "Notification")">Add User   <i class="fa fa-plus"></i></a>
                                 </li>
                                 <li>
-                                    <a href="@Url.Action("ViewUserDetails", "Admin")">View User  <i class="fa fa-eye"></i></a>
+                                    <a href="@Url.Action("AddNotification", "Notification")">View User  <i class="fa fa-eye"></i></a>
                                 </li>
 
                             </ul>
                         </li>
                     }
-                    
-                    <li>
-                        
-                    </li>
                 </ul>
             </div>
 
@@ -165,25 +160,22 @@
                         <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
                         <form role="search" class="navbar-form-custom" method="post" action="#">
                             <div class="form-group">
-                                <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search" onkeyup="myFunction()" >
+                                <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search" oninput="w3.filterHTML('#myTable', '.search', this.value)" @*onkeyup="myFunction()"*@>
                             </div>
                         </form>
-                       
                     </div>
                     <ul class="nav navbar-top-links navbar-right">
                         <li>
                             <span class="m-r-sm text-muted welcome-message">Welcome to Task Manager</span>
-                        </li>
-                        
-                        <li>
-                            <p>Total Number of visitors: @ApplicationInstance.Application["Totaluser"]</p>
                         </li>
                         <li>
                             <a class="" data-toggle="modal" data-target="#myModal">
                                 <i class="fa fa-sign-out"></i> Log out
                             </a>
                         </li>
-                        
+                        <li>
+                            <p>Total Number of visitors: @ApplicationInstance.Application["Totaluser"]</p>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -204,7 +196,7 @@
     <!-- Mainly scripts -->
     <script src="~/js/jquery-2.1.1.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
-    <script src="~/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+   / <script src="~/js/plugins/metisMenu/jquery.metisMenu.js"></script>
     <script src="~/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 
     <!-- Custom and plugin javascript -->
@@ -223,7 +215,76 @@
 </body>
 
 </html>
+<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+
+
+<style type="text/css">
+    .container {
+        margin: 150px auto;
+    }
+
+    div.search span,
+    div.search input[name="top-search"] {
+        display: block;
+    }
+
+    div.search input[name="top-search"] {
+        margin-top: 4px;
+    }
+
+    div.panel {
+        margin-bottom: 15px;
+    }
+
+    span.match {
+        background: yellow;
+        color: black;
+    }
+</style>
+@*<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.12.2.min.js"></script>
+<script type='text/javascript'>
+    //<![CDATA[
+    window.onload = function () {
+        $(function () {
+            debugger;
+            var mark = function () {
+                debugger;
+                a       // Read the keyword
+                var keyword = $("input[name='top-search']").val();
+
+                // Determine selected options
+                var options = {
+                    "className": "match"
+                };
+
+                // Mark the keyword inside the context
+                $('#myTable').removeMark();
+                $('#myTable').mark(keyword, options);
+            };
+
+            $("input[name='top-search']").on("keyup", mark);
+
+        });
+
+    }//]]>
+
+</script>
 <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36251023-1']);
+    _gaq.push(['_setDomainName', 'jqueryscript.net']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+</script>
+@*<script type="text/javascript">
     function myFunction() {
 
         // Declare variables
@@ -244,19 +305,19 @@
                 }
             }
         }
-    }
+    }*@
 
-    //$('#top-search').change(function () {
-    //        var searchtext = $(this).val();
-    //        $.ajax({
-    //            cache: false,
-    //            type: "get",
-    //            url: "/Admin/Search/",
-    //            data: { SearchText : searchtext },
-    //            success: function (response) {
-    //            }
-    //        })
-    //    })
+@*//$('#top-search').change(function () {
+        //        var searchtext = $(this).val();
+        //        $.ajax({
+        //            cache: false,
+        //            type: "get",
+        //            url: "/Admin/Search/",
+        //            data: { SearchText : searchtext },
+        //            success: function (response) {
+        //            }
+        //        })
+        //    })
 
 
-</script>
+    </script>*@

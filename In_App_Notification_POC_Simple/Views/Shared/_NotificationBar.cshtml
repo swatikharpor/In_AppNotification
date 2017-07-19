@@ -1,7 +1,9 @@
-﻿@model List<In_App_Notification_POC_Simple.Models.NotificationDm>
+﻿@using In_App_Notification_POC_Simple.Models
+@using Newtonsoft.Json
+@model List<In_App_Notification_POC_Simple.Models.NotificationDm>
 @{
     ViewBag.Title = "ListTask";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    
 }
 <style>
     .ul {
@@ -161,87 +163,90 @@
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         var id;
 
         // ANIMATEDLY DISPLAY THE NOTIFICATION COUNTER.
         $(function notificationCount() {
             $.ajax({
-                url: "/Notification/GetUnreadNotificationsCount",
+                url: "/Notification/GetUnreadNotifications_Count",
                 type: 'get',
                 dataType: 'json',
-                success: function (data) {
+                success: function(data) {
                     $('#noti_Counter').html(data);
-                },
-                complete: function () {
-                    // Schedule the next request when the current one's complete
-                    setTimeout(notificationCount, 5000);
-                }
 
+                    //complete: function() {
+                    //    // Schedule the next request when the current one's complete
+                    //    setTimeout(notificationCount, 5000);
+                    //}
+                    //}
+                }
             });
+
         });
+
         $.ajax({
             url: "/Notification/GetTopTenNotifications",
             type: 'get',
             dataType: 'json',
-            success: function (response) {
-                $('#notifications').style = "display:block"
+            success: function(response) {
+                $('#notifications').style = "display:block";
                 var len = response.length;
 
-                //  $("#notifications").empty();
-                //    $("#notifications").append("<select id =options>");
+
                 for (var i = 0; i < len; i++) {
                     id = response[i]['Id'];
                     var type = response[i]['NotificationType'];
                     var message = response[i]["NotificationMessage"];
 
-                    $("#noti").append("<button id=\"notify\" style=\"width:100%; height:30px; background-color: #f5f5f5; color: #050516;\"class=\"btn btn-default\"  value=" +
-                        id +
-                        ">" +
-                        type +
-                        " , " +
-                        message +
-                        "</button>").bind("click", function () {
-                            debugger;
-                            var options = { "backdrop": "static", keyboard: true };
-                            $.ajax({
-                                url: "/Notification/GetNotificationById",
-                                data: { notificationId: id },
-                                type: 'post',
-                                success: function (response) {
+                    $("#noti")
+                        .append("<button id=\"notify\" style=\"width:100%; height:30px; background-color: #f5f5f5; color: #050516;\"class=\"btn btn-default\"  value=" +
+                            id +
+                            ">" +
+                            type +
+                            " , " +
+                            message +
+                            "</button>").bind("click",
+                            function() {
+                               
+                                var options = { "backdrop": "static", keyboard: true };
+                                $.ajax({
+                                    url: "/Notification/GetNotificationById",
+                                    data: { notificationId: id },
+                                    type: 'post',
+                                    success: function(response) {
 
-                                    $('.modal-dialog').html(response);
-                                    $('#myModal').modal(options);
-                                    $('#myModal').modal('show');
+                                        $('.modal-dialog').html(response);
+                                        $('#myModal').modal(options);
+                                        $('#myModal').modal('show');
 
-                                },
-                                error: function (response) {
-                                    alert("Error");
-                                    $('#myModalContent').html(response);
-                                    $('#myModal').modal(options);
-                                    $('#myModal').modal('show');
-                                }
+                                    },
+                                    error: function(response) {
+                                        alert("Error");
+                                        $('#myModalContent').html(response);
+                                        $('#myModal').modal(options);
+                                        $('#myModal').modal('show');
+                                    }
 
 
+                                });
                             });
-                        });
                 }
             }
         });
 
-        $('#noti_Button').click(function () {
+        $('#noti_Button').click(function() {
 
             // TOGGLE (SHOW OR HIDE) NOTIFICATION WINDOW.
             $('#notifications').fadeToggle('fast',
                 'linear',
-                function () {
+                function() {
                     if ($('#notifications').is(':hidden')) {
                         $('#noti_Button').css('background-color', '#2E467C');
                     } else $('#noti_Button').css('background-color', '#FFF'); // CHANGE BACKGROUND COLOR OF THE BUTTON.
 
 
                 });
-
 
 
             //  $('#noti_Counter').html(notiCount);
@@ -251,7 +256,7 @@
         });
 
         // HIDE NOTIFICATIONS WHEN CLICKED ANYWHERE ON THE PAGE.
-        $(document).click(function () {
+        $(document).click(function() {
             $('#notifications').hide();
 
             // CHECK IF NOTIFICATION COUNTER IS HIDDEN.
@@ -261,9 +266,14 @@
             }
         });
 
-        $('#notifications').click(function () {
+        $('#notifications').click(function() {
             return false; // DO NOTHING WHEN CONTAINER IS CLICKED.
         });
+     
     });
+
+
+   
+       
 
 </script>

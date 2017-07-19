@@ -1,0 +1,49 @@
+﻿@using In_App_Notification_POC_Simple.Models
+
+@{
+    ViewBag.Title = "ManagerNotification";
+}
+
+<h2>ManagerrNotification</h2>
+
+@{
+    Html.RenderPartial("_NotificationBar");
+}
+
+@{
+    var user = (LoginDetailDm)Session["SessionData"];
+    // var url = string.Empty;
+} $(document).ready(function() {
+    $(function waitEvent() {
+                $.ajax({
+                    url: "/Notification/ManagerWaitMessage",
+                    data:{userName:"@user.UserName"},
+                    type: 'get',
+                    dataType: 'json',
+                    success: function(response) {
+
+                    if (response) {
+                    $.ajax({
+                    url: "/Notification/GetUnreadNotifications_Count",
+                    type: 'get',
+                    dataType: 'json',
+                    success: function (data) {
+                    $('#noti_Counter').html(data);
+                    setTimeout(waitEvent, 0);
+                    }
+                    });
+                    }
+                    else {
+
+                    setTimeout(waitEvent, 0);
+                    };
+                    // Keep looping.
+
+                    },
+                    complete: function () {
+                    // Schedule the next request when the current one's complete
+                    setTimeout(waitEvent(), 5000);
+                    }
+                    });
+                    });
+                    });

@@ -1,11 +1,9 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
+using In_App_Notification_POC_Simple.Comet;
 using In_App_Notification_POC_Simple.Models;
 using Enum = In_App_Notification_POC_Simple.Models.Enum;
 
@@ -29,6 +27,7 @@ namespace In_App_Notification_POC_Simple.Controllers
             if (response.IsSuccessStatusCode)
             {
                 loginDetail = response.Content.ReadAsAsync<LoginDetailDm>().Result;
+                ClientAdapter.Instance.Join(loginDetail.UserName.Trim());
             }
             switch (loginDetail.RoleId)
             {

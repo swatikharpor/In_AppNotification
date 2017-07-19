@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using In_App_Notification_POC_Simple.Comet;
 using In_App_Notification_POC_Simple.Models;
-using Microsoft.Ajax.Utilities;
+
 
 namespace In_App_Notification_POC_Simple.Controllers
 {
     public class NotificationController : Controller
     {
         private readonly HttpClient _client = new HttpClient { BaseAddress = new Uri("http://localhost:62027") };
+
         public async Task<ActionResult> AddNotification()
         {
             var response = new List<LoginDetailDm>();
@@ -23,20 +24,28 @@ namespace In_App_Notification_POC_Simple.Controllers
             }
             return result.IsSuccessStatusCode ? View("AddNotification1") : View("Error");
         }
+
         [HttpPost]
         public async Task<ActionResult> AddNotification(NotificationDm notification)
         {
             var user = (LoginDetailDm)Session["SessionData"];
-            var response = new bool();
+            var response = new NotificationDm();
             notification.Id = Guid.NewGuid().ToString();
             notification.NotificationFrom = user.Id;
             var result = await _client.PostAsJsonAsync("/notifications", notification);
             if (result.IsSuccessStatusCode)
             {
-                response = result.Content.ReadAsAsync<bool>().Result;
+                response = result.Content.ReadAsAsync<NotificationDm>().Result;
+                var message = new Message
+                {
+                    RecipientName = "swati",
+                    MessageContent = "hello"
+                };
+                // var clientAdapter = new ClientAdapter();
+                var state = ClientAdapter.Instance.EmployeeSendMessage(message);
             }
 
-            return RedirectToAction("AddNotification");
+            return View("ManagerNotification");
         }
 
         public async Task<JsonResult> GetTopTenNotifications()
@@ -67,26 +76,60 @@ namespace In_App_Notification_POC_Simple.Controllers
 
         public ActionResult EmployeeNotification()
         {
-            var user = (LoginDetailDm)Session["SessionData"];
-            var result = _client.GetAsync($"/notifications/{user.Id}/unread");
-            var response = new List<NotificationDm>();
-            if (result.Result.IsSuccessStatusCode)
-            {
-                response = result.Result.Content.ReadAsAsync<List<NotificationDm>>().Result;
+            // var user = (LoginDetailDm)Session["SessionData"];
+            //var result = _client.GetAsync($"/notifications/{user.Id}/unread");
+            //var response = new List<NotificationDm>();
+            //if (result.Result.IsSuccessStatusCode)
+            //{
+            //    response = result.Result.Content.ReadAsAsync<List<NotificationDm>>().Result;
 
-            }
-            return View("_NotificationBar", response);
+            //}
+            return View("EmployeeNotification");
         }
 
-        public JsonResult GetUnreadNotificationsCount()
+        public JsonResult GetUnreadNotifications_Count()
+
         {
             var user = (LoginDetailDm)Session["SessionData"];
             var count = _client.GetAsync($"notifications/{user.Id}/unread/count");
-            // var c = count.Result.Content.ReadAsAsync<int>().Result;
+            var c = count.Result.Content.ReadAsAsync<int>().Result;
             return count.Result.IsSuccessStatusCode
-                ? Json(count.Result.Content.ReadAsAsync<int>().Result, JsonRequestBehavior.AllowGet)
+                ? Json(c, JsonRequestBehavior.AllowGet)
                 : Json("error", JsonRequestBehavior.DenyGet);
 
+        }
+
+        public ActionResult ManagerNotification()
+        {
+            return View("ManagerNotification");
+        }
+
+        public JsonResult ManagerWaitMessage(string userName)
+        {
+            var state = new bool();
+
+
+            var dispatcher = new Dispatcher();
+            state = dispatcher.ManagerWaitMessage(userName);
+            return Json(state, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult EmployeeWaitMessage(string userName)
+        {
+            var state = new bool();
+
+
+            var dispatcher = new Dispatcher();
+            state = dispatcher.EmployeeWaitMessage(userName);
+
+            return Json(state, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetNotificationBarPartial()
+        {
+            // var result = _client.GetAsync($"/notifications/{notificationId}");
+            // var response = new NotificationDm();
+            return PartialView("_NotificationBar");
         }
     }
 }
